@@ -7,7 +7,7 @@ from entity_query_language import symbol
 from probabilistic_model.probabilistic_circuit.rx.helper import uniform_measure_of_event
 from typing_extensions import List
 
-from ..world_description.geometry import BoundingBoxCollection
+from ..world_description.shape_collection import BoundingBoxCollection
 from ..datastructures.prefixed_name import PrefixedName
 from ..spatial_types import Point3
 from ..datastructures.variables import SpatialVariables
@@ -37,19 +37,11 @@ class HasDoors:
 class Handle(View):
     body: Body
 
-    def __post_init__(self):
-        if self.name is None:
-            self.name = PrefixedName(str(self.body.name), self.__class__.__name__)
-
 
 @symbol
 @dataclass(unsafe_hash=True)
 class Container(View):
     body: Body
-
-    def __post_init__(self):
-        if self.name is None:
-            self.name = PrefixedName(str(self.body.name), self.__class__.__name__)
 
 
 @dataclass(unsafe_hash=True)
@@ -61,9 +53,6 @@ class Door(View):  # Door has a Footprint
     handle: Handle
     body: Body
 
-    def __post_init__(self):
-        self.name = PrefixedName(str(self.body.name), self.__class__.__name__)
-
 
 @dataclass(unsafe_hash=True)
 class Fridge(View):
@@ -73,10 +62,6 @@ class Fridge(View):
 
     body: Body
     door: Door
-
-    def __post_init__(self):
-        if self.name is None:
-            self.name = PrefixedName(str(self.body.name), self.__class__.__name__)
 
 
 @dataclass(unsafe_hash=True)
@@ -108,9 +93,6 @@ class Table(View):
         samples = np.concatenate((samples, z_coordinate), axis=1)
         return [Point3(*s, reference_frame=self.top) for s in samples]
 
-    def __post_init__(self):
-        self.name = self.top.name
-
 
 ################################
 
@@ -134,10 +116,6 @@ class SupportingSurface(View):
     The region that represents the supporting surface.
     """
 
-    def __post_init__(self):
-        if self.name is None:
-            self.name = self.region.name
-
 
 #################### subclasses von Components
 
@@ -146,17 +124,10 @@ class SupportingSurface(View):
 class EntryWay(Components):
     body: Body
 
-    def __post_init__(self):
-        if self.name is None:
-            self.name = PrefixedName(str(self.body.name), self.__class__.__name__)
-
 
 @dataclass(unsafe_hash=True)
 class Door(EntryWay):
     handle: Handle
-
-    def __post_init__(self):
-        self.name = self.body.name
 
 
 @dataclass(unsafe_hash=True)
@@ -164,19 +135,11 @@ class Fridge(View):
     body: Body
     door: Door
 
-    def __post_init__(self):
-        if self.name is None:
-            self.name = PrefixedName(str(self.body.name), self.__class__.__name__)
-
 
 @dataclass(unsafe_hash=True)
 class DoubleDoor(EntryWay):
     left_door: Door
     right_door: Door
-
-    def __post_init__(self):
-        if self.name is None:
-            self.name = PrefixedName(str(self.body.name), self.__class__.__name__)
 
 
 @symbol
@@ -184,10 +147,6 @@ class DoubleDoor(EntryWay):
 class Drawer(Components):
     container: Container
     handle: Handle
-
-    def __post_init__(self):
-        if self.name is None:
-            self.name = self.container.name
 
 
 ############################### subclasses to Furniture
@@ -201,19 +160,12 @@ class Dresser(Furniture):
     drawers: List[Drawer] = field(default_factory=list, hash=False)
     doors: List[Door] = field(default_factory=list, hash=False)
 
-    def __post_init__(self):
-        if self.name is None:
-            self.name = self.container.name
-
 
 ############################### subclasses to Cupboard
 @dataclass(unsafe_hash=True)
 class Cabinet(Cupboard):
     container: Container
     drawers: list[Drawer] = field(default_factory=list, hash=False)
-
-    def __post_init__(self):
-        self.name = self.container.name
 
 
 @dataclass
@@ -235,16 +187,8 @@ class Room(View):
     The room's floor.
     """
 
-    def __post_init__(self):
-        if self.name is None:
-            self.name = self.floor.name
-
 
 @dataclass
 class Wall(View):
     body: Body
     doors: List[Door] = field(default_factory=list)
-
-    def __post_init__(self):
-        if self.name is None:
-            self.name = self.body.name

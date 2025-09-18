@@ -22,6 +22,7 @@ from .spatial_types import TransformationMatrix
 from .spatial_types.derivatives import DerivativeMap
 from .spatial_types.spatial_types import Vector3
 from .world import World
+from .world_description.shape_collection import ShapeCollection
 from .world_description.world_entity import KinematicStructureEntity, Body
 
 
@@ -79,29 +80,38 @@ def world_setup_simple():
     root = Body(name=PrefixedName(name="root", prefix="world"))
     body1 = Body(
         name=PrefixedName("name1", prefix="test"),
-        collision=[
-            Box(
-                origin=TransformationMatrix.from_xyz_rpy(),
-                scale=Scale(0.25, 0.25, 0.25),
-            )
-        ],
+        collision=ShapeCollection(
+            [
+                Box(
+                    origin=TransformationMatrix.from_xyz_rpy(),
+                    scale=Scale(0.25, 0.25, 0.25),
+                )
+            ]
+        ),
     )
     body2 = Body(
         name=PrefixedName("name2", prefix="test"),
-        collision=[
-            Box(
-                origin=TransformationMatrix.from_xyz_rpy(),
-                scale=Scale(0.25, 0.25, 0.25),
-            )
-        ],
+        collision=ShapeCollection(
+            [
+                Box(
+                    origin=TransformationMatrix.from_xyz_rpy(),
+                    scale=Scale(0.25, 0.25, 0.25),
+                )
+            ]
+        ),
     )
     body3 = Body(
         name=PrefixedName("name3", prefix="test"),
-        collision=[Sphere(origin=TransformationMatrix.from_xyz_rpy(), radius=0.01)],
+        collision=ShapeCollection(
+            [Sphere(origin=TransformationMatrix.from_xyz_rpy(), radius=0.01)]
+        ),
     )
+
     body4 = Body(
         name=PrefixedName("name4", prefix="test"),
-        collision=[Sphere(origin=TransformationMatrix.from_xyz_rpy(), radius=0.01)],
+        collision=ShapeCollection(
+            [Sphere(origin=TransformationMatrix.from_xyz_rpy(), radius=0.01)]
+        ),
     )
 
     with world.modify_world():
