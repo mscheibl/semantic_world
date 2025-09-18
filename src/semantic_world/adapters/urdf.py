@@ -374,7 +374,7 @@ class URDFParser:
                 from ament_index_python.packages import get_package_share_directory
 
                 package_path = get_package_share_directory(package_name)
-            except ImportError:
+            except Exception as e:
                 if self.package_resolver:
                     if package_name in self.package_resolver:
                         package_path = self.package_resolver[package_name]
